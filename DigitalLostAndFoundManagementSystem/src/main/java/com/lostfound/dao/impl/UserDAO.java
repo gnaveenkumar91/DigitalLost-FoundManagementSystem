@@ -2,6 +2,7 @@ package com.lostfound.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import com.lostfound.dao.UserDAOInterface;
 import com.lostfound.model.User;
@@ -30,6 +31,35 @@ public class UserDAO implements UserDAOInterface {
 			System.out.println(e);
 		}
 		return status;
+	}
+	@Override
+	public User loginUser(String email, String password) {
+		 User user = null;
+
+	        try {
+	    		    DBConnection dbc=new DBConnection();
+	    		    con=dbc.getConnection();
+	            PreparedStatement ps = con.prepareStatement(
+	                "SELECT * FROM users WHERE email=? AND password=?"
+	            );
+
+	            ps.setString(1, email);
+	            ps.setString(2, password);
+
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+	                user = new User();
+	                user.setId(rs.getInt("id"));
+	                user.setName(rs.getString("name"));
+	                user.setEmail(rs.getString("email"));
+	                user.setRole(rs.getString("role"));
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return user;
 	}
 
 	
